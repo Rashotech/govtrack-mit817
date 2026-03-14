@@ -10,3 +10,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Custom error handlers
+handler404 = 'govtracker.error_handlers.handler404'
+handler500 = 'govtracker.error_handlers.handler500'
+handler403 = 'govtracker.error_handlers.handler403'

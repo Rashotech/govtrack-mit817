@@ -1,4 +1,5 @@
 {% extends 'govtracker/base.html' %}
+{% load govtracker_filters %}
 
 {% block title %}{{ project.title }} - GovTrack{% endblock %}
 
@@ -70,13 +71,13 @@
                     
                     <div>
                         <div class="text-sm text-gray-500 mb-1">Budget Allocated</div>
-                        <div class="font-medium text-lg text-green-600">₦{{ project.budget_allocated|floatformat:0 }}</div>
+                        <div class="font-medium text-lg text-green-600">₦{{ project.budget_allocated|intcomma }}</div>
                     </div>
                     
                     {% if project.amount_disbursed %}
                     <div>
                         <div class="text-sm text-gray-500 mb-1">Amount Disbursed</div>
-                        <div class="font-medium text-lg">₦{{ project.amount_disbursed|floatformat:0 }}</div>
+                        <div class="font-medium text-lg">₦{{ project.amount_disbursed|intcomma }}</div>
                     </div>
                     {% endif %}
                 </div>
