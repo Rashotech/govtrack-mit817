@@ -1,0 +1,136 @@
+{% extends 'govtracker/base.html' %}
+
+{% block title %}{{ post.title }} - GovTrack{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 text-sm">
+        <a href="{% url 'govtracker:home' %}" class="text-blue-600 hover:text-blue-700">Home</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'govtracker:citizen_post_list' %}" class="text-blue-600 hover:text-blue-700">Community Reports</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-600">{{ post.reference_number }}</span>
+    </nav>
+    
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between mb-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    {{ post.get_category_display }}
+                </span>
+                <span class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y" }}</span>
+            </div>
+            
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ post.title }}</h1>
+            
+            <div class="flex items-center text-sm text-gray-600">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ post.location_address }}, {{ post.lga.name }}
+            </div>
+        </div>
+        
+        <!-- Images/Videos -->
+        {% if post.media.all %}
+        <div class="p-6 border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for media in post.media.all %}
+                    {% if media.media_type == 'image' %}
+                    <img src="{{ media.file.url }}" alt="{{ post.title }}" class="w-full h-64 object-cover rounded-lg">
+                    {% else %}
+                    <video controls class="w-full h-64 rounded-lg">
+                        <source src="{{ media.file.url }}" type="video/mp4">
+                    </video>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Description -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">Description</h2>
+            <p class="text-gray-700 whitespace-pre-line">{{ post.description }}</p>
+        </div>
+        
+        <!-- Details -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">Report Details</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">Reference Number</div>
+                    <div class="font-medium">{{ post.reference_number }}</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">Category</div>
+                    <div class="font-medium">{{ post.get_category_display }}</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">Location</div>
+                    <div class="font-medium">{{ post.lga.name }}</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-500 mb-1">Submitted</div>
+                    <div class="font-medium">{{ post.created_at|date:"M d, Y" }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upvote Section -->
+        <div class="p-6 bg-gray-50">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1">Support this report</h3>
+                    <p class="text-sm text-gray-600">Help prioritize this issue by showing your support</p>
+                </div>
+                <button id="upvote-btn" onclick="upvotePost('{{ post.reference_number }}')" 
+                        class="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                    </svg>
+                    <span id="upvote-count">{{ post.upvotes }}</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Map -->
+        {% if post.latitude and post.longitude %}
+        <div class="p-6">
+            <h2 class="text-lg font-bold text-gray-900 mb-3">Location on Map</h2>
+            <div class="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
+                <span class="text-gray-500">Map: {{ post.latitude }}, {{ post.longitude }}</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function upvotePost(referenceNumber) {
+    fetch(`/reports/${referenceNumber}/upvote/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('upvote-count').textContent = data.upvotes;
+            document.getElementById('upvote-btn').disabled = true;
+            document.getElementById('upvote-btn').classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}

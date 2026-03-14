@@ -1,0 +1,98 @@
+{% extends 'govtracker/base.html' %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-blue-600 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Government Projects Transparency</h1>
+        <p class="text-xl text-blue-100 mb-8">Track infrastructure projects and report issues in your community</p>
+        
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-blue-700 rounded-lg p-4">
+                <div class="text-3xl font-bold">{{ total_projects }}</div>
+                <div class="text-blue-200 text-sm">Total Projects</div>
+            </div>
+            <div class="bg-yellow-500 rounded-lg p-4">
+                <div class="text-3xl font-bold">{{ ongoing_count }}</div>
+                <div class="text-yellow-100 text-sm">Ongoing</div>
+            </div>
+            <div class="bg-green-500 rounded-lg p-4">
+                <div class="text-3xl font-bold">{{ completed_count }}</div>
+                <div class="text-green-100 text-sm">Completed</div>
+            </div>
+            <div class="bg-blue-500 rounded-lg p-4">
+                <div class="text-3xl font-bold">{{ total_posts }}</div>
+                <div class="text-blue-100 text-sm">Citizen Reports</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ongoing Projects -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Ongoing Projects</h2>
+        <a href="{% url 'govtracker:project_list' %}?status=ongoing" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            View all →
+        </a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for project in ongoing_projects %}
+            {% include 'govtracker/components/project_card.html' %}
+        {% empty %}
+        <p class="text-gray-500 col-span-3">No ongoing projects</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Completed Projects -->
+<div class="bg-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Recently Completed</h2>
+            <a href="{% url 'govtracker:project_list' %}?status=completed" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                View all →
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for project in completed_projects %}
+                {% include 'govtracker/components/project_card.html' %}
+            {% empty %}
+            <p class="text-gray-500 col-span-3">No completed projects</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Community Reports -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Recent Community Reports</h2>
+        <a href="{% url 'govtracker:citizen_post_list' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+            View all →
+        </a>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for post in recent_posts %}
+            {% include 'govtracker/components/citizen_post_card.html' %}
+        {% empty %}
+        <p class="text-gray-500 col-span-3">No community reports</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-blue-600 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold mb-4">See an issue in your community?</h2>
+        <p class="text-xl text-blue-100 mb-8">Report it and help improve infrastructure in your area</p>
+        <a href="{% url 'govtracker:citizen_post_create' %}" class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50">
+            Report an Issue
+        </a>
+    </div>
+</div>
+{% endblock %}

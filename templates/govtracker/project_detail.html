@@ -1,0 +1,152 @@
+{% extends 'govtracker/base.html' %}
+
+{% block title %}{{ project.title }} - GovTrack{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="mb-6 text-sm">
+        <a href="{% url 'govtracker:home' %}" class="text-blue-600 hover:text-blue-700">Home</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <a href="{% url 'govtracker:project_list' %}" class="text-blue-600 hover:text-blue-700">Projects</a>
+        <span class="mx-2 text-gray-400">/</span>
+        <span class="text-gray-600">{{ project.title|truncatewords:5 }}</span>
+    </nav>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- Images -->
+            {% if project.images.all %}
+            <div class="mb-6">
+                <img src="{{ project.images.first.image.url }}" alt="{{ project.title }}" class="w-full h-96 object-cover rounded-lg">
+                {% if project.images.count > 1 %}
+                <div class="grid grid-cols-4 gap-2 mt-2">
+                    {% for image in project.images.all|slice:"1:5" %}
+                    <img src="{{ image.image.url }}" alt="{{ image.caption }}" class="w-full h-24 object-cover rounded">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Title and Status -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-3">
+                    {% include 'govtracker/components/status_badge.html' with status=project.status %}
+                    <span class="text-sm text-gray-500">{{ project.category.name }}</span>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ project.title }}</h1>
+                <p class="text-gray-600">{{ project.description }}</p>
+            </div>
+            
+            <!-- Project Details -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Project Information</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Location</div>
+                        <div class="font-medium">{{ project.location_address }}</div>
+                        <div class="text-sm text-gray-600">{{ project.lga.name }}</div>
+                    </div>
+                    
+                    {% if project.ministry %}
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Ministry</div>
+                        <div class="font-medium">{{ project.ministry }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.contractor %}
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Contractor</div>
+                        <div class="font-medium">{{ project.contractor.name }}</div>
+                        {% if project.contractor.registration_number %}
+                        <div class="text-sm text-gray-600">Reg: {{ project.contractor.registration_number }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Budget Allocated</div>
+                        <div class="font-medium text-lg text-green-600">₦{{ project.budget_allocated|floatformat:0 }}</div>
+                    </div>
+                    
+                    {% if project.amount_disbursed %}
+                    <div>
+                        <div class="text-sm text-gray-500 mb-1">Amount Disbursed</div>
+                        <div class="font-medium text-lg">₦{{ project.amount_disbursed|floatformat:0 }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Timeline -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Project Timeline</h2>
+                
+                <div class="space-y-4">
+                    {% if project.date_awarded %}
+                    <div class="flex items-start">
+                        <div class="w-24 text-sm text-gray-500">Awarded</div>
+                        <div class="font-medium">{{ project.date_awarded|date:"M d, Y" }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.date_commenced %}
+                    <div class="flex items-start">
+                        <div class="w-24 text-sm text-gray-500">Started</div>
+                        <div class="font-medium">{{ project.date_commenced|date:"M d, Y" }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.expected_completion_date %}
+                    <div class="flex items-start">
+                        <div class="w-24 text-sm text-gray-500">Expected</div>
+                        <div class="font-medium">{{ project.expected_completion_date|date:"M d, Y" }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if project.actual_completion_date %}
+                    <div class="flex items-start">
+                        <div class="w-24 text-sm text-gray-500">Completed</div>
+                        <div class="font-medium text-green-600">{{ project.actual_completion_date|date:"M d, Y" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-blue-50 rounded-lg p-6 mb-6">
+                <h3 class="font-bold text-gray-900 mb-4">Quick Stats</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Status</span>
+                        <span class="font-medium">{{ project.get_status_display }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Category</span>
+                        <span class="font-medium">{{ project.category.name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">LGA</span>
+                        <span class="font-medium">{{ project.lga.name }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% if project.latitude and project.longitude %}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <h3 class="font-bold text-gray-900 mb-3">Location</h3>
+                <div class="bg-gray-200 h-48 rounded flex items-center justify-center">
+                    <span class="text-gray-500">Map: {{ project.latitude }}, {{ project.longitude }}</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
