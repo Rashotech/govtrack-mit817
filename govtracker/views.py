@@ -89,6 +89,14 @@ class CitizenPostListView(ListView):
         if lga:
             queryset = queryset.filter(lga_id=lga)
         
+        # Filter by date range
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        if date_from:
+            queryset = queryset.filter(created_at__date__gte=date_from)
+        if date_to:
+            queryset = queryset.filter(created_at__date__lte=date_to)
+        
         # Sort by most supported
         sort = self.request.GET.get('sort')
         if sort == 'most_supported':
