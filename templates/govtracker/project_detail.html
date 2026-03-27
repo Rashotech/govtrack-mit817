@@ -91,9 +91,9 @@
                     </div>
                     {% endif %}
                     
-                    {% if project.contractor %}
                     <div>
                         <div class="text-sm text-gray-500 mb-1">Contractor</div>
+                        {% if project.contractor %}
                         <div class="font-medium">{{ project.contractor.name }}</div>
                         {% if project.contractor.registration_number %}
                         <div class="text-sm text-gray-600">Reg: {{ project.contractor.registration_number }}</div>
@@ -104,8 +104,10 @@
                         {% if project.contractor.contact_phone %}
                         <div class="text-sm text-gray-600">Phone: {{ project.contractor.contact_phone }}</div>
                         {% endif %}
+                        {% else %}
+                        <div class="font-medium text-gray-500 italic">Contractor Pending Award</div>
+                        {% endif %}
                     </div>
-                    {% endif %}
                     
                     <div>
                         <div class="text-sm text-gray-500 mb-1">Budget Allocated</div>
