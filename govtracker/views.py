@@ -43,6 +43,14 @@ class ProjectListView(ListView):
         if lga:
             queryset = queryset.filter(lga_id=lga)
         
+        # Filter by budget range
+        budget_min = self.request.GET.get('budget_min')
+        budget_max = self.request.GET.get('budget_max')
+        if budget_min:
+            queryset = queryset.filter(budget_allocated__gte=budget_min)
+        if budget_max:
+            queryset = queryset.filter(budget_allocated__lte=budget_max)
+        
         return queryset
 
     def get_context_data(self, **kwargs):
