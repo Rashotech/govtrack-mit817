@@ -16,6 +16,10 @@
                 <div class="text-white text-opacity-90 text-sm uppercase tracking-wide font-medium">Total Projects</div>
             </div>
             <div class="border-2 border-white border-opacity-30 rounded-lg p-6 text-center hover:border-opacity-60 transition-all">
+                <div class="text-4xl font-bold mb-2 text-white">{{ pending_count }}</div>
+                <div class="text-white text-opacity-90 text-sm uppercase tracking-wide font-medium">Pending</div>
+            </div>
+            <div class="border-2 border-white border-opacity-30 rounded-lg p-6 text-center hover:border-opacity-60 transition-all">
                 <div class="text-4xl font-bold mb-2 text-white">{{ ongoing_count }}</div>
                 <div class="text-white text-opacity-90 text-sm uppercase tracking-wide font-medium">Ongoing</div>
             </div>
@@ -23,22 +27,18 @@
                 <div class="text-4xl font-bold mb-2 text-white">{{ completed_count }}</div>
                 <div class="text-white text-opacity-90 text-sm uppercase tracking-wide font-medium">Completed</div>
             </div>
-            <div class="border-2 border-white border-opacity-30 rounded-lg p-6 text-center hover:border-opacity-60 transition-all">
-                <div class="text-4xl font-bold mb-2 text-white">{{ total_posts }}</div>
-                <div class="text-white text-opacity-90 text-sm uppercase tracking-wide font-medium">Citizen Reports</div>
-            </div>
         </div>
     </div>
 </div>
 
-<!-- Ongoing Projects -->
+<!-- Pending Projects -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h2 class="text-3xl font-bold text-gray-900">Ongoing Projects</h2>
-            <p class="text-gray-600 mt-1">Currently under construction</p>
+            <h2 class="text-3xl font-bold text-gray-900">Pending Projects <span class="text-red-600">({{ pending_count }})</span></h2>
+            <p class="text-gray-600 mt-1">Awaiting commencement</p>
         </div>
-        <a href="{% url 'govtracker:project_list' %}?status=ongoing" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+        <a href="{% url 'govtracker:project_list' %}?status=pending" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
             View all
             <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -47,16 +47,47 @@
     </div>
     
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for project in ongoing_projects %}
+        {% for project in pending_projects %}
             {% include 'govtracker/components/project_card.html' %}
         {% empty %}
         <div class="col-span-3 text-center py-12 bg-gray-50 rounded-lg">
             <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <p class="text-gray-500 text-lg">No ongoing projects</p>
+            <p class="text-gray-500 text-lg">No pending projects</p>
         </div>
         {% endfor %}
+    </div>
+</div>
+
+<!-- Ongoing Projects -->
+<div class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Ongoing Projects <span class="text-yellow-600">({{ ongoing_count }})</span></h2>
+                <p class="text-gray-600 mt-1">Currently under construction</p>
+            </div>
+            <a href="{% url 'govtracker:project_list' %}?status=ongoing" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                View all
+                <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for project in ongoing_projects %}
+                {% include 'govtracker/components/project_card.html' %}
+            {% empty %}
+            <div class="col-span-3 text-center py-12 bg-white rounded-lg">
+                <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <p class="text-gray-500 text-lg">No ongoing projects</p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -65,7 +96,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <div>
-                <h2 class="text-3xl font-bold text-gray-900">Recently Completed</h2>
+                <h2 class="text-3xl font-bold text-gray-900">Recently Completed <span class="text-green-600">({{ completed_count }})</span></h2>
                 <p class="text-gray-600 mt-1">Successfully delivered projects</p>
             </div>
             <a href="{% url 'govtracker:project_list' %}?status=completed" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">

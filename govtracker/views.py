@@ -180,6 +180,7 @@ def upvote_post(request, reference_number):
 # Homepage
 def home(request):
     context = {
+        'pending_projects': Project.objects.filter(status='pending').select_related('category', 'lga')[:6],
         'ongoing_projects': Project.objects.filter(status='ongoing').select_related('category', 'lga')[:6],
         'completed_projects': Project.objects.filter(status='completed').select_related('category', 'lga')[:6],
         'recent_posts': CitizenPost.objects.filter(status='approved').select_related('lga')[:6],
