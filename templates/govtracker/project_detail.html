@@ -98,6 +98,12 @@
                         {% if project.contractor.registration_number %}
                         <div class="text-sm text-gray-600">Reg: {{ project.contractor.registration_number }}</div>
                         {% endif %}
+                        {% if project.contractor.contact_email %}
+                        <div class="text-sm text-gray-600">Email: {{ project.contractor.contact_email }}</div>
+                        {% endif %}
+                        {% if project.contractor.contact_phone %}
+                        <div class="text-sm text-gray-600">Phone: {{ project.contractor.contact_phone }}</div>
+                        {% endif %}
                     </div>
                     {% endif %}
                     
